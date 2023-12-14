@@ -216,7 +216,7 @@ function changeLanguage(selectElement) {
   const elements = document.querySelectorAll("[data-translation]");
   elements.forEach((element) => {
     const translationKey = element.dataset.translation;
-    element.textContent = translations[selectedValue][translationKey] || "";
+    element.textContent = translations_js[selectedValue][translationKey] || "";
   });
 }
 
@@ -224,18 +224,19 @@ function changeLanguage(selectElement) {
 // to load translations file
 // اجيب الترجمات واغير لغة الموقع
 async function loadTranslations() {
-  try {
-    const response = await fetch("./translations.json");
-    if (!response.ok) {
-      throw new Error(`Failed to load translations: ${response.status}`);
-    }
-    translations = await response.json();
-    let lang = localStorage.getItem("lang") || "ar"
-    changeLanguage(lang);
-    console.log(translations);
-  } catch (error) {
-    console.error("Error loading translations:", error);
-  }
+  let lang = localStorage.getItem("lang") || "ar"
+  changeLanguage(lang);
+  // try {
+  //   const response = await fetch("./translations.json");
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to load translations: ${response.status}`);
+  //   }
+  //   translations = await response.json();
+  
+  //   console.log(translations);
+  // } catch (error) {
+  //   console.error("Error loading translations:", error);
+  // }
 }
 
 
