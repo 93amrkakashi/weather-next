@@ -186,7 +186,7 @@ function displayResults(results) {
   results.forEach((result) => {
     const listItem = document.createElement("li");
     listItem.innerHTML = `
-    <a href="../city.html?name=${result}"
+    <a href="../city?name=${result}"
     class="inline-block w-full  result_item" >
     ${result}
     </a>`;
@@ -225,7 +225,7 @@ function changeLanguage(selectElement) {
 // اجيب الترجمات واغير لغة الموقع
 async function loadTranslations() {
   try {
-    const response = await fetch("../locales/translations.json");
+    const response = await fetch("./translations.json");
     if (!response.ok) {
       throw new Error(`Failed to load translations: ${response.status}`);
     }
@@ -279,7 +279,7 @@ function populateCities() {
   citiesList.innerHTML = "";
   citiesArray.forEach((city) => {
     const cityElement = document.createElement("a");
-    cityElement.href = `../city.html?name=${city}`;
+    cityElement.href = `../city?name=${city}`;
     cityElement.id = "city";
     cityElement.className = "bg-gray-50 m-auto flex justify-center items-center font-bold h-[50px] border-2 rounded-lg text-center text-sm md:text-xl w-[100px] md:w-[200px] py-1 px-2";
     const spanElement = document.createElement("span");
