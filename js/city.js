@@ -36,7 +36,7 @@ async function callAdanTime(lat, lng, lang) {
   prayer_con.innerHTML = "";
   prayer_con.classList.add(`${lang == "ar" ? "." : "flex-row-reverse"}`);
   const adan = await fetch(
-    `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${lat}&longitude=${lng}&method=2`
+    `http://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${lat}&longitude=${lng}&method=2`
   );
   const adanData = await adan.json();
   const prayerTimings = adanData.data[day - 1].timings;

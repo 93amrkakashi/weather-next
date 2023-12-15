@@ -1,6 +1,16 @@
+let user;
 const article_con = document.getElementById("articles");
-// let theme = localStorage.getItem("theme")
+const addButton = document.querySelector('.add_btn');
+const login_form = document.querySelector('.login');
 
+
+
+addButton.addEventListener('mouseenter', function () {
+    this.textContent = "إضافة مقال";
+});
+addButton.addEventListener('mouseleave', function () {
+    this.textContent = "+";
+});
 
 function add_eles() {
   article_con.innerHTML = ""
@@ -13,8 +23,8 @@ for (let i = 0; i < 10; i++) {
             </div>
             <div class="title font-bold text-3xl text-center ">Lorem ipsum dostrum, omnis.</div>
             <div class="desc font-bold text-xl text-center ">Lorem ipsum dut repudiandae consequatur tempora omnis aspernatur porro id deserunt autem quod blanditiis dolorem culpa, voluptate, beatae facilis amet?</div>
-            <a href="/article?id=5" >
-            <button data-translation="read_btn" class="bg-[#0167b4] text-3xl font-bold text-white px-5 py-2 my-4 rounded-2xl"></button>
+            <a href="/form?id=5" >
+            <button data-translation="edit_btn" class="bg-[#0167b4] text-3xl font-bold text-white px-5 py-2 my-4 rounded-2xl"></button>
             </a>
         </div>
     `;
@@ -22,19 +32,9 @@ for (let i = 0; i < 10; i++) {
     article_con.appendChild(articleElement);
 }
 }
-add_eles()
-change_glass(localStorage.getItem("theme"))
-
-
 
 selectElement.addEventListener("change", function () {
   changeLanguage(this);
-  // change_glass(localStorage.getItem("theme"))
-  // change_dir(localStorage.getItem("lang"));
-  // viewStateCities();
-  // callWeatherAPI(statelat, statelng, localStorage.getItem("lang"));
-  // callAdanTime(statelat, statelng, localStorage.getItem("lang"));
-  // city_name.innerText = stateName;
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -44,12 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {
   if (lang) {
     selectElement.value = lang;
   }
+
   loadTranslations();
+  change_glass(localStorage.getItem("theme"))
+  if (user) {
+    add_eles()
+  } else {
+    login_form.classList.add("show-el")
+    article_con.classList.add("hide-el")
+    addButton.classList.add("hide-el")
+  }
 
   // change_dir(lang);
-  // viewStateCities();
 
-  // callWeatherAPI(statelat, statelng, lang);
-  // callAdanTime(statelat, statelng, lang);
-  // city_name.innerText = stateName;
 });
