@@ -221,12 +221,12 @@ async function S(o, s, a) {
           "h-[55px]"
         ),
           (u.innerHTML = `
-        <p class="text-xl font-bold">${i}</p>
+        <p class="text-2xl font-bold">${i}</p>
         <img src="http://openweathermap.org/img/wn/${p.weather[0].icon}@4x.png"
           class="w-[70px] h-[70ox] mx-4 " alt="${p.weather[0].description}"
         />
-        <p dir="rtl" class=" text-bold text-lg font-bold">${p.temp.max}&deg;</p>
-        <p dir="rtl" class=" text-bold text-md font-md">${p.temp.min}&deg;</p>
+        <p dir="rtl" class=" text-bold text-2xl font-bold">${Math.round(p.temp.max)}&deg;</p>
+        <p dir="rtl" class=" text-bold text-xl font-md">${Math.round(p.temp.min)}&deg;</p>
       `),
           g.appendChild(u);
       });
@@ -238,7 +238,7 @@ async function S(o, s, a) {
         m.weather[0].description
       }</h3>
       <p dir="rtl" class="font-bold text-2xl md:text-4xl font-md">${
-        m.temp.max
+        Math.round(m.temp.max)
       }&deg;C</p>
       <p class="text-xl font-bold">${new Date(m.dt * 1e3).toLocaleDateString(
         "fr-FR"

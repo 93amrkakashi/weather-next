@@ -114,12 +114,12 @@ async function callWeatherAPI(lat, lng, lang) {
       );
       // inner html for days list on homepage that shows days with weather data for each day
       dayElement.innerHTML = `
-        <p class="text-xl font-bold">${dayName}</p>
+        <p class="text-2xl font-bold">${dayName}</p>
         <img src="http://openweathermap.org/img/wn/${day.weather[0].icon}@4x.png"
           class="w-[70px] h-[70ox] mx-4 " alt="${day.weather[0].description}"
         />
-        <p dir="rtl" class=" text-bold text-lg font-bold">${day.temp.max}&deg;</p>
-        <p dir="rtl" class=" text-bold text-md font-md">${day.temp.min}&deg;</p>
+        <p dir="rtl" class=" text-bold text-2xl font-bold">${Math.round(day.temp.max)}&deg;</p>
+        <p dir="rtl" class=" text-bold text-xl font-md">${Math.round(day.temp.min)}&deg;</p>
       `;
       weatherContainer.appendChild(dayElement);
     });
@@ -133,7 +133,7 @@ async function callWeatherAPI(lat, lng, lang) {
         firstDay.weather[0].description
       }</h3>
       <p dir="rtl" class="font-bold text-2xl md:text-4xl font-md">${
-        firstDay.temp.max
+        Math.round(firstDay.temp.max)
       }&deg;C</p>
       <p class="text-xl font-bold">${new Date(
         firstDay.dt * 1000
