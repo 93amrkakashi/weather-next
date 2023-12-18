@@ -99,7 +99,9 @@ body {
 .add_btn:hover{
   width: 225px;
 }
-
+.article_image{
+  width: 45%;
+}
 
 .footer {
   border-radius: 11px;

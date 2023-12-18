@@ -1,5 +1,5 @@
 loadLayout()
-
+const url = `http://localhost:5000/api/`
 const stateNames = Object.keys(citiesData);
 const citiesArray = stateNames;
 const selectElement = document.getElementById("languageSelect");

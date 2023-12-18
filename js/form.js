@@ -1,12 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-  lang = localStorage.getItem("lang") || "ar";
-  theme = localStorage.getItem("theme") || "light";
-  mainContainer.classList.add(theme);
-  if (lang) {
-    selectElement.value = lang;
-  }
-  loadTranslations();
-});
 selectElement.addEventListener("change", function () {
   changeLanguage(this);
 });
@@ -64,7 +55,7 @@ dropzone.addEventListener("drop", function (e) {
 const send_btn = document.getElementById("send_btn");
 let displayedImages = [];
 let choosedImage;
-let isUploading = false; 
+let isUploading = false;
 
 document
   .getElementById("articleForm")
@@ -76,11 +67,11 @@ document
       const mainImage = await chooseMainImage(imagesResponse);
       const title_ar = document.getElementById("title_ar").value;
       const title_fr = document.getElementById("title_fr").value;
-      const body_ar = ar_body.getText();
-      const body_fr = fr_body.getText();
+      const body_ar = JSON.stringify(ar_body.getContents());
+      const body_fr = JSON.stringify(fr_body.getContents());
       const all_images = imagesResponse;
       console.log(title_ar, title_fr, body_ar, body_fr, mainImage, all_images);
-      const response = await fetch("http://localhost:5000/api/articles", {
+      const response = await fetch(`${url}articles`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,6 +87,7 @@ document
       });
       const responseData = await response.json();
       console.log(responseData);
+
     } catch (error) {
       console.error("حدث خطأ:", error);
     }
@@ -104,17 +96,17 @@ document
 async function sendImagesToServer(images) {
   try {
     filePreview.innerHTML = "جارى رفع الملفات....";
-    isUploading = true; 
-    updateButtonState(); 
-    const response = await fetch("http://localhost:5000/api/articles/upload", {
+    isUploading = true;
+    updateButtonState();
+    const response = await fetch(`${url}articles/upload`, {
       method: "POST",
       body: images,
     });
     const imagesResponse = await response.json();
     console.log(imagesResponse);
 
-    isUploading = false; 
-    updateButtonState(); 
+    isUploading = false;
+    updateButtonState();
     return imagesResponse.uploadedUrls;
   } catch (error) {
     console.error("حدث خطأ أثناء إرسال الصور:", error);
@@ -155,7 +147,7 @@ async function chooseIt(image) {
 }
 
 function updateButtonState() {
-  send_btn.classList.add("cursor-not-allowed")
+  send_btn.classList.add("cursor-not-allowed");
   if (isUploading) {
     send_btn.textContent = "جارى رفع الصور";
     send_btn.disabled = true;
@@ -164,3 +156,48 @@ function updateButtonState() {
     send_btn.disabled = true;
   }
 }
+
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get("id");
+console.log(id);
+
+async function loadArticle() {
+  try {
+    const response = await fetch(`${url}articles/${id}`);
+    if (!response.ok) {
+      throw new Error("network error");
+    }
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function setEditMode() {
+let data = await loadArticle()
+let title_ar = document.getElementById("title_ar");
+let title_fr = document.getElementById("title_fr");
+let body_ar = ar_body.getText();
+let body_fr = fr_body.getText();
+title_ar.value = data.title_ar
+title_fr.value = data.title_fr
+ar_body.setContents(JSON.parse(data.body_ar));
+fr_body.setContents(JSON.parse(data.body_fr));
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+  lang = localStorage.getItem("lang") || "ar";
+  theme = localStorage.getItem("theme") || "light";
+  mainContainer.classList.add(theme);
+  if (lang) {
+    selectElement.value = lang;
+  }
+  loadTranslations();
+  if (id) {
+  await  setEditMode();
+  } else {
+  }
+});
