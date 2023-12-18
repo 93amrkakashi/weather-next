@@ -95,7 +95,12 @@ body {
   border-radius: 22px;
   transition: all 0.7s ease-in-out;
 }
-
+@media (max-width: 400px) {
+  .add_btn {
+    left: 20px; 
+    bottom: 20px;
+  }
+}
 .add_btn:hover{
   width: 225px;
 }
