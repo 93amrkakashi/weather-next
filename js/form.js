@@ -1,40 +1,3 @@
-const footerTextElement = document.getElementById("footerText");
-const currentYear = new Date().getFullYear();
-footerTextElement.textContent = `meteo-Tunisie.net © ! أفضل معلومات الطقس. ${currentYear}!`;
-let selectElement = document.getElementById("languageSelect");
-const searchResultsElement = document.getElementById("searchResults");
-const mainContainer = document.querySelector("body");
-
-let toggleBtn = document.querySelector("#navbar-toggle");
-let collapse = document.querySelector("#navbar-collapse");
-
-toggleBtn.onclick = () => {
-  collapse.classList.toggle("hidden");
-  collapse.classList.toggle("flex");
-};
-
-let translations;
-
-async function loadTranslations() {
-  const response = await fetch("./locales/translations.json");
-  translations = await response.json();
-  lang = localStorage.getItem("lang");
-  changeLanguage(lang || "ar");
-}
-
-function changeLanguage() {
-  let selectedValue = selectElement.value;
-  console.log(selectedValue);
-  document.documentElement.lang = selectedValue;
-  localStorage.setItem("lang", selectedValue);
-  const elements = document.querySelectorAll("[data-translation]");
-  elements.forEach((element) => {
-    const translationKey = element.dataset.translation;
-    element.textContent = translations[selectedValue][translationKey] || "";
-  });
-}
-
-loadTranslations();
 document.addEventListener("DOMContentLoaded", function () {
   lang = localStorage.getItem("lang") || "ar";
   theme = localStorage.getItem("theme") || "light";
@@ -42,77 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
   if (lang) {
     selectElement.value = lang;
   }
-  changeLanguage(lang);
+  loadTranslations();
 });
-
-function searchCities(text) {
-  if (!text.length <= 0) {
-    const results = filterCities(text);
-    displayResults(results);
-  } else {
-    searchResultsElement.style.display = "none";
-  }
-}
-function filterCities(text) {
-  text = text.toLowerCase();
-  const sliceLength = lang === "ar" ? 4 : 6;
-  if (lang == "ar") {
-    return arTun.filter((city_name) =>
-      city_name.city.toLowerCase().slice(sliceLength).includes(text)
-    );
-  } else {
-    return frTun.filter((city_name) =>
-      city_name.city.toLowerCase().slice(sliceLength).includes(text)
-    );
-  }
-}
-
-function displayResults(results) {
-  searchResultsElement.innerHTML = "";
-  results.forEach((result) => {
-    const listItem = document.createElement("li");
-    listItem.innerHTML = `
-    <a href="./index.html?lat=${result.lat}&lng=${result.lng}&city=${result.city}"
-    class="inline-block w-full  result_item" >
-    ${result.city}
-    </a>`;
-    searchResultsElement.appendChild(listItem);
-  });
-  searchResultsElement.style.display = results.length > 0 ? "flex" : "none";
-}
-const themeToggleBtn = document.querySelector(".theme_toggler");
-themeToggleBtn.addEventListener("click", changeTheme);
-glass_element = document.querySelectorAll(".glass");
-
-function change_glass(theme) {
-  if (theme == "dark") {
-    glass_element.forEach(function (element) {
-      element.classList.add("glass_dark");
-      element.classList.remove("glass_light");
-    });
-  } else {
-    glass_element.forEach(function (element) {
-      element.classList.add("glass_light");
-      element.classList.remove("glass_dark");
-    });
-  }
-}
-
-change_glass(localStorage.getItem("theme"));
-
-function changeTheme() {
-  if (mainContainer.classList.contains("light")) {
-    mainContainer.classList.add("dark");
-    mainContainer.classList.remove("light");
-    localStorage.setItem("theme", "dark");
-    change_glass("dark");
-  } else {
-    mainContainer.classList.add("light");
-    mainContainer.classList.remove("dark");
-    localStorage.setItem("theme", "light");
-    change_glass("light");
-  }
-}
+selectElement.addEventListener("change", function () {
+  changeLanguage(this);
+});
 
 const toolbar = [
   ["bold", "italic", "underline", "strike"],
@@ -144,14 +41,90 @@ var fr_body = new Quill("#fr_body", {
   },
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  var fileInput = document.getElementById("file-input");
-  var filePreview = document.getElementById("file-preview");
+var fileInput = document.getElementById("file-input");
+var filePreview = document.getElementById("file-preview");
 
-  fileInput.addEventListener("change", function () {
-    filePreview.innerHTML = "جارى المعالجة";
+var dropzone = document.getElementById("file-upload");
+dropzone.addEventListener("dragover", function (e) {
+  e.preventDefault();
+  dropzone.classList.add("drag-over");
+});
+dropzone.addEventListener("dragleave", function () {
+  dropzone.classList.remove("drag-over");
+});
+dropzone.addEventListener("drop", function (e) {
+  e.preventDefault();
+  dropzone.classList.remove("drag-over");
+  var files = e.dataTransfer.files;
+  fileInput.files = files;
+  var event = new Event("change");
+  fileInput.dispatchEvent(event);
+});
 
-    var files = fileInput.files;
+const send_btn = document.getElementById("send_btn");
+let displayedImages = [];
+let choosedImage;
+let isUploading = false; 
+
+document
+  .getElementById("articleForm")
+  .addEventListener("submit", async function (event) {
+    event.preventDefault();
+    try {
+      let imagesData = new FormData(this);
+      let imagesResponse = await sendImagesToServer(imagesData);
+      const mainImage = await chooseMainImage(imagesResponse);
+      const title_ar = document.getElementById("title_ar").value;
+      const title_fr = document.getElementById("title_fr").value;
+      const body_ar = ar_body.getText();
+      const body_fr = fr_body.getText();
+      const all_images = imagesResponse;
+      console.log(title_ar, title_fr, body_ar, body_fr, mainImage, all_images);
+      const response = await fetch("http://localhost:5000/api/articles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title_ar,
+          title_fr,
+          body_ar,
+          body_fr,
+          mainImage,
+          all_images,
+        }),
+      });
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error("حدث خطأ:", error);
+    }
+  });
+
+async function sendImagesToServer(images) {
+  try {
+    filePreview.innerHTML = "جارى رفع الملفات....";
+    isUploading = true; 
+    updateButtonState(); 
+    const response = await fetch("http://localhost:5000/api/articles/upload", {
+      method: "POST",
+      body: images,
+    });
+    const imagesResponse = await response.json();
+    console.log(imagesResponse);
+
+    isUploading = false; 
+    updateButtonState(); 
+    return imagesResponse.uploadedUrls;
+  } catch (error) {
+    console.error("حدث خطأ أثناء إرسال الصور:", error);
+    throw error;
+  }
+}
+
+async function chooseMainImage(imagesResponse) {
+  return new Promise(async (resolve) => {
+    var files = imagesResponse;
     filePreview.innerHTML = "";
     for (var i = 0; i < files.length; i++) {
       var file = files[i];
@@ -160,32 +133,34 @@ document.addEventListener("DOMContentLoaded", function () {
       var image = document.createElement("img");
       image.classList.add("file-preview-image");
       previewItem.appendChild(image);
-      image.src = URL.createObjectURL(file);
-      image.classList.add("uploaded_file")
+      image.src = file;
+      image.classList.add("uploaded_file");
+      image.addEventListener("click", async function () {
+        resolve(await chooseIt(image));
+      });
       filePreview.appendChild(previewItem);
     }
   });
-
-  var dropzone = document.getElementById("file-upload");
-
-  dropzone.addEventListener("dragover", function (e) {
-    e.preventDefault();
-    dropzone.classList.add("drag-over");
+}
+// فى غلطة بنت وسخه
+async function chooseIt(image) {
+  return new Promise((resolve) => {
+    const allImages = document.querySelectorAll(".file-preview-image");
+    allImages.forEach((otherImage) => {
+      otherImage.style.border = "none";
+    });
+    image.style.border = "5px solid green";
+    resolve(image.src);
   });
+}
 
-  dropzone.addEventListener("dragleave", function () {
-    dropzone.classList.remove("drag-over");
-  });
-
-  dropzone.addEventListener("drop", function (e) {
-    e.preventDefault();
-    dropzone.classList.remove("drag-over");
-
-    var files = e.dataTransfer.files;
-    fileInput.files = files;
-
-    // Trigger the change event to update the file preview
-    var event = new Event("change");
-    fileInput.dispatchEvent(event);
-  });
-});
+function updateButtonState() {
+  send_btn.classList.add("cursor-not-allowed")
+  if (isUploading) {
+    send_btn.textContent = "جارى رفع الصور";
+    send_btn.disabled = true;
+  } else {
+    send_btn.textContent = "اختر صورة رئيسية";
+    send_btn.disabled = true;
+  }
+}
