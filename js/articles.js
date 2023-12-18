@@ -3,7 +3,7 @@ const article_con = document.getElementById("articles");
 
 async function loadArticles() {
   try {
-    const response = await fetch("http://localhost:5000/api/articles");
+    const response = await fetch(`${url}articles`);
     if (!response.ok) {
       throw new Error("network error");
     }
