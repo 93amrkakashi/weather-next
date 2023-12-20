@@ -1,6 +1,6 @@
 loadLayout()
 // http://localhost:5000/api/
-const url = `https://weather-server-gules.vercel.app/api/`
+const url = `https://weather-server-gules.vercel.app/`
 // const url = `http://localhost:5000/api/`
 const stateNames = Object.keys(citiesData);
 const citiesArray = stateNames;
