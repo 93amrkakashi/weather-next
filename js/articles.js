@@ -40,8 +40,8 @@ async function add_eles(lang) {
               <div class="image">
                   <img src="${mainImage}" alt="">
               </div>
-              <div class="title font-bold text-3xl text-center ">${title}</div>
-              <div class="desc w-full font-bold text-xl text-center ">${plainText.slice(
+              <div class="title h-[20%] font-bold text-3xl text-center ">${title}</div>
+              <div class="desc h-[20%] w-full font-bold text-xl text-center ">${plainText.slice(
                 0,
                 100
               )}....</div>

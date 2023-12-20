@@ -41,16 +41,16 @@
         <form id="articleForm" class="w-full flex flex-col justify-start items-center gap-4"
           enctype="multipart/form-data">
           <div class="section w-full flex flex-col md:flex-row justify-around items-center gap-4">
-            <div class="field px-3 w-[50%] flex flex-col justify-center items-start gap-3">
+            <div class="field px-3 w-full md:w-[50%] flex flex-col justify-center items-start gap-3">
               <label class="text-2xl font-bold ">العنوان العربى
               </label>
-              <input class="w-[95%] h-[55px] text-2xl font-bold rounded-xl bg-white text-black" type="text"
+              <input class="w-[95%] h-[55px] text-xl md:text-2xl font-bold rounded-xl bg-white text-black" type="text"
                 name="title_ar" id="title_ar">
             </div>
-            <div class="field px-3 w-[50%] flex flex-col justify-center items-start gap-3">
+            <div class="field px-3 w-full md:w-[50%] flex flex-col justify-center items-start gap-3">
               <label class="text-2xl font-bold ">العنوان الفرنسى
               </label>
-              <input class="w-[95%] h-[55px] text-2xl font-bold rounded-xl bg-white text-black" type="text"
+              <input dir="ltr" class="w-[95%] h-[55px] text-xl md:text-2xl font-bold rounded-xl bg-white text-black" type="text"
                 name="title_fr" id="title_fr">
             </div>
           </div>
@@ -73,12 +73,12 @@
             </div>
           </div>
         </form>
-        <div class="section w-full flex flex-row-reverse justify-around items-center gap-4">
-          <div class="field px-3 w-[50%] flex flex-col justify-center items-start gap-3">
+        <div class="section w-full flex flex-col md:flex-row-reverse justify-around items-start mt-5 gap-4">
+          <div class="field px-3 w-full md:w-[50%] flex flex-col justify-center items-start gap-3">
             <label class="text-2xl font-bold ">باقى الصور
             </label>
             <div id="file-upload"
-              class="dropzone relative  w-[100%] h-[35vh] flex flex-col items-center justify-center ">
+              class="dropzone relative  w-[100%] h-[18vh] md:h-[35vh] flex flex-col items-center justify-center ">
               <input name="images" class="hidden" type="file" id="file-input" multiple accept="image/*"/>
               <label for="file-input"
                 class="upload-icon bg-white w-[100%] h-full rounded-3xl  flex flex-col justify-center items-center ">
@@ -90,11 +90,11 @@
               class="file-preview rounded-3xl bg-white w-[100%] text-black flex justify-around items-center text-2xl font-bold flex-wrap ">
               الملفات المرفقة</div>
           </div>
-          <div class="field px-3 w-[50%] flex flex-col justify-center items-start gap-3">
+          <div class="field px-3 w-full md:w-[50%] flex flex-col justify-center items-start gap-3">
             <label class="text-2xl font-bold ">الصورة الرئيسية للمقال
             </label>
             <div id="main_image_z"
-              class="main_image_z relative  w-[100%] h-[35vh] flex flex-col items-center justify-center ">
+              class="main_image_z relative  w-[100%] h-[18vh] md:h-[35vh] flex flex-col items-center justify-center ">
               <input name="mainimagee" class="hidden" type="file" id="mainimagee" multiple accept="image/*" />
               <label for="mainimagee"
                 class="upload-icon bg-white w-[100%] h-full rounded-3xl  flex flex-col justify-center items-center ">
@@ -108,8 +108,10 @@
           </div>
         </div>
 
-        <button id="send_btn" class="text-left bg-[#0167b4] text-4xl font-bold text-white px-11 py-2 my-4 rounded-2xl "
-            > send </button>
+<div class=" w-full flex justify-center items-center mt-5">
+  <button id="send_btn" class="text-left bg-[#0167b4] text-4xl font-bold text-white px-11 py-2 my-4 rounded-2xl "
+  > ارسال </button>
+</div>
       </div>
     </div>
 

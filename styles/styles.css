@@ -64,6 +64,7 @@ body {
 .image {
   overflow: hidden;
   border-radius: 18px 18px 0 0;
+  height: 50%;
 }
 
 .login {
@@ -96,12 +97,7 @@ body {
   transition: all 0.7s ease-in-out;
 }
 
-@media (max-width: 400px) {
-  .add_btn {
-    left: 20px;
-    bottom: 20px;
-  }
-}
+
 
 .add_btn:hover {
   width: 225px;
@@ -124,9 +120,8 @@ body {
   margin: 10px;
 }
 .preview-image {
-  width: 250px;
-  height: 250px;
-  margin: 15px;
+  width: 100%;
+  height: 100%;
 }
 
 
@@ -140,6 +135,25 @@ height: 35px;
 border-radius: 50%;
 font-size: 35px;
 color: white;
+}
+
+@media (max-width: 600px) {
+  .add_btn {
+    left: 20px;
+    bottom: 20px;
+  }
+  .image-container{
+    width: 150px;
+    height: 150px;
+    margin: 5px;
+  }
+  .delete-button {
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+    left: -15px;
+    top: -5px;
+}
 }
 .glass {
   text-decoration: none;

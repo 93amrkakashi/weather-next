@@ -1,3 +1,4 @@
+let editMode = false
 selectElement.addEventListener("change", function () {
   changeLanguage(this);
 });
@@ -54,7 +55,13 @@ dropzone.addEventListener("drop", function (e) {
   fileInput.files = files;
   var event = new Event("change");
   fileInput.dispatchEvent(event);
-  displayDroppedImages(files,filePreview, fileInput)
+  displayDroppedImages(files, filePreview, fileInput);
+});
+fileInput.addEventListener("change", function (e) {
+  displayDroppedImages(e.target.files, filePreview, fileInput);
+});
+mainImageInput.addEventListener("change", function (e) {
+  displayDroppedImages(e.target.files, mainImagePreview, mainImageInput);
 });
 
 main_image_z.addEventListener("dragover", function (e) {
@@ -71,10 +78,10 @@ main_image_z.addEventListener("drop", function (e) {
   mainImageInput.files = files;
   var event = new Event("change");
   mainImageInput.dispatchEvent(event);
-  displayDroppedImages(files,mainImagePreview, mainImageInput)
+  displayDroppedImages(files, mainImagePreview, mainImageInput);
 });
 
-function displayDroppedImages(files, filePreviewer, fileInput, local=true) {
+function displayDroppedImages(files, filePreviewer, fileInput, local = true) {
   filePreviewer.innerHTML = "";
   Array.from(files).forEach((file, index) => {
     var reader = new FileReader();
@@ -94,10 +101,10 @@ function displayDroppedImages(files, filePreviewer, fileInput, local=true) {
         var currentFiles = Array.from(fileInput.files);
         currentFiles.splice(index, 1);
         var dataTransfer = new DataTransfer();
-        currentFiles.forEach(file => dataTransfer.items.add(file));
+        currentFiles.forEach((file) => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
-        console.log(fileInput.files)
-        console.log(currentFiles)
+        console.log(fileInput.files);
+        console.log(currentFiles);
       });
       imageContainer.appendChild(deleteButton);
       filePreviewer.appendChild(imageContainer);
@@ -105,7 +112,7 @@ function displayDroppedImages(files, filePreviewer, fileInput, local=true) {
     if (local) {
       reader.readAsDataURL(file);
     } else {
-      console.log(file)
+      console.log(file);
       var imageContainer = document.createElement("div");
       imageContainer.classList.add("image-container");
       var imageElement = document.createElement("img");
@@ -115,11 +122,15 @@ function displayDroppedImages(files, filePreviewer, fileInput, local=true) {
       imageContainer.appendChild(imageElement);
       var deleteButton = document.createElement("button");
       deleteButton.innerText = "X";
-      deleteButton.id = `article_images/${file.split('article_images/')[1].split('.')[0]}`;
+      deleteButton.id = `article_images/${
+        file.split("article_images/")[1].split(".")[0]
+      }`;
       deleteButton.classList.add("delete-button");
       deleteButton.addEventListener("click", function () {
         filePreviewer.removeChild(imageContainer);
-        deleteImage(`article_images/${file.split('article_images/')[1].split('.')[0]}`)
+        deleteImage(
+          `article_images/${file.split("article_images/")[1].split(".")[0]}`
+        );
       });
       imageContainer.appendChild(deleteButton);
       filePreviewer.appendChild(imageContainer);
@@ -127,30 +138,31 @@ function displayDroppedImages(files, filePreviewer, fileInput, local=true) {
   });
 }
 
-
 function deleteImage(id) {
   fetch(`${url}articles/deleteimage`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ imageId: id }),
   })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
-        throw new Error('فشل في حذف الصورة');
+        throw new Error("فشل في حذف الصورة");
       }
       return response.json();
     })
-    .then(data => {
-      console.log('تم حذف الصورة بنجاح:', data.message);
-      setEditMode()
+    .then((data) => {
+      console.log("تم حذف الصورة بنجاح:", data.message);
+      setEditMode();
     })
-    .catch(error => {
-      console.error('حدث خطأ أثناء حذف الصورة:', error.message);
+    .catch((error) => {
+      console.error("حدث خطأ أثناء حذف الصورة:", error.message);
     });
 }
-
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get("id");
+console.log(id);
 
 const send_btn = document.getElementById("send_btn");
 let the_form = document.getElementById("articleForm");
@@ -158,6 +170,8 @@ let the_form = document.getElementById("articleForm");
 send_btn.addEventListener("click", async function (event) {
   event.preventDefault();
   try {
+    send_btn.textContent= "جارى ارسال المقال"
+    send_btn.classList.add("disabled")
     let imagesResponse = await sendImagesToServer();
     const mainImage = await uploadFile();
     const title_ar = document.getElementById("title_ar").value;
@@ -166,8 +180,12 @@ send_btn.addEventListener("click", async function (event) {
     const body_fr = JSON.stringify(fr_body.getContents());
     const all_images = imagesResponse;
     console.log(title_ar, title_fr, body_ar, body_fr, mainImage, all_images);
-    const response = await fetch(`${url}articles`, {
-      method: "POST",
+    const api = editMode ? `${url}articles/${id}`: `${url}articles`;
+    let method = editMode ? "PATCH":"POST"
+    console.log(api)
+    console.log(method)
+    const response = await fetch(`${api}`, {
+      method: method,
       headers: {
         "Content-Type": "application/json",
       },
@@ -182,7 +200,7 @@ send_btn.addEventListener("click", async function (event) {
     });
     const responseData = await response.json();
     console.log(responseData);
-    window.location.assign("./dash.html")
+    window.location.assign("./dash.html");
   } catch (error) {
     console.error("حدث خطأ:", error);
   }
@@ -214,6 +232,7 @@ async function uploadFile() {
     var file = fileInput.files[0];
     var formData = new FormData();
     formData.append("mainimagee", file);
+    console.log(fileInput.files)
     const response = await fetch(`${url}articles/upload`, {
       method: "POST",
       body: formData,
@@ -230,9 +249,7 @@ async function uploadFile() {
   }
 }
 
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
-console.log(id);
+
 
 async function loadArticle() {
   try {
@@ -250,6 +267,8 @@ async function loadArticle() {
 }
 
 async function setEditMode() {
+  editMode = true
+  console.log(editMode)
   let data = await loadArticle();
   let title_ar = document.getElementById("title_ar");
   let title_fr = document.getElementById("title_fr");
@@ -259,8 +278,33 @@ async function setEditMode() {
   title_fr.value = data.title_fr;
   ar_body.setContents(JSON.parse(data.body_ar));
   fr_body.setContents(JSON.parse(data.body_fr));
-  displayDroppedImages(data.all_images, filePreview, fileInput,false)
-  // displayDroppedImages(data.mainImage, mainImagePreview, mainImageInput,false)
+  displayDroppedImages(data.all_images, filePreview, fileInput, false);
+
+  mainImagePreview.innerHTML = "";
+  var imageContainer = document.createElement("div");
+  imageContainer.classList.add("image-container");
+  var imageElement = document.createElement("img");
+  imageElement.src = data.mainImage;
+  imageElement.alt = `Image from the web`;
+  imageElement.classList.add("preview-image");
+  imageContainer.appendChild(imageElement);
+  var deleteButton = document.createElement("button");
+  deleteButton.innerText = "X";
+  deleteButton.id = `article_images/${
+    data.mainImage.split("article_images/")[1].split(".")[0]
+  }`;
+  deleteButton.classList.add("delete-button");
+  deleteButton.addEventListener("click", function () {
+    mainImagePreview.removeChild(imageContainer);
+    deleteImage(
+      `article_images/${
+        data.mainImage.split("article_images/")[1].split(".")[0]
+      }`
+    );
+  });
+  imageContainer.appendChild(deleteButton);
+  mainImagePreview.appendChild(imageContainer);
+  return true
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
