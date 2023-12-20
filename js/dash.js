@@ -127,7 +127,7 @@ async function add_eles(lang) {
   }
 }
 
-
+// deleteArticle
 function deleteArticle(articleId) {
   fetch(`${url}articles/${articleId}`, {
     method: 'DELETE',

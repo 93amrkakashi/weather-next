@@ -72,30 +72,45 @@
               </div>
             </div>
           </div>
-          <div class="section w-full flex justify-around items-center gap-4">
-            <div class="field px-3 w-[100%] flex flex-col justify-center items-start gap-3">
-              <label class="text-2xl font-bold ">الصور
-              </label>
-              <div id="file-upload"
-                class="dropzone relative  w-[100%] h-[35vh] flex flex-col items-center justify-center ">
-                <input name="images" class="hidden" type="file" id="file-input" multiple accept="image/*">
-                <label for="file-input"
-                  class="upload-icon bg-white w-[100%] h-full rounded-3xl  flex flex-col justify-center items-center ">
-                  <i class="fas fa-upload text-6xl text-[#1c8edf]"></i>
-                  <p class=" text-4xl font-bold  text-[#1c8edf]"> إرفاق الصور</p>
-                </label>
-              </div>
-              <div id="file-preview"
-                class="file-preview rounded-3xl bg-white w-[100%] text-black flex justify-around items-center text-2xl font-bold flex-wrap ">
-                الملفات المرفقة</div>
-            </div>
-          </div>
-          <button id="send_btn" class="text-left bg-[#0167b4] text-4xl font-bold text-white px-11 py-2 my-4 rounded-2xl "
-            value="Submit"> send </button>
-
         </form>
-      </div>
+        <div class="section w-full flex flex-row-reverse justify-around items-center gap-4">
+          <div class="field px-3 w-[50%] flex flex-col justify-center items-start gap-3">
+            <label class="text-2xl font-bold ">باقى الصور
+            </label>
+            <div id="file-upload"
+              class="dropzone relative  w-[100%] h-[35vh] flex flex-col items-center justify-center ">
+              <input name="images" class="hidden" type="file" id="file-input" multiple accept="image/*"/>
+              <label for="file-input"
+                class="upload-icon bg-white w-[100%] h-full rounded-3xl  flex flex-col justify-center items-center ">
+                <i class="fas fa-upload text-6xl text-[#1c8edf]"></i>
+                <p class=" text-4xl font-bold  text-[#1c8edf]"> إرفاق الصور</p>
+              </label>
+            </div>
+            <div id="file-preview"
+              class="file-preview rounded-3xl bg-white w-[100%] text-black flex justify-around items-center text-2xl font-bold flex-wrap ">
+              الملفات المرفقة</div>
+          </div>
+          <div class="field px-3 w-[50%] flex flex-col justify-center items-start gap-3">
+            <label class="text-2xl font-bold ">الصورة الرئيسية للمقال
+            </label>
+            <div id="main_image_z"
+              class="main_image_z relative  w-[100%] h-[35vh] flex flex-col items-center justify-center ">
+              <input name="mainimagee" class="hidden" type="file" id="mainimagee" multiple accept="image/*" />
+              <label for="mainimagee"
+                class="upload-icon bg-white w-[100%] h-full rounded-3xl  flex flex-col justify-center items-center ">
+                <i class="fas fa-upload text-6xl text-[#1c8edf]"></i>
+                <p class=" text-4xl font-bold  text-[#1c8edf]"> إرفاق الصور</p>
+              </label>
+            </div>
+            <div id="main_image_p"
+              class="file-preview-z rounded-3xl bg-white w-[100%] text-black flex justify-around items-center text-2xl font-bold flex-wrap ">
+              الملفات المرفقة</div>
+          </div>
+        </div>
 
+        <button id="send_btn" class="text-left bg-[#0167b4] text-4xl font-bold text-white px-11 py-2 my-4 rounded-2xl "
+            > send </button>
+      </div>
     </div>
 
     <footer id="foooter"

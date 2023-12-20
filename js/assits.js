@@ -1,5 +1,7 @@
 loadLayout()
+// http://localhost:5000/api/
 const url = `https://weather-server-gules.vercel.app/api/`
+// const url = `http://localhost:5000/api/`
 const stateNames = Object.keys(citiesData);
 const citiesArray = stateNames;
 const selectElement = document.getElementById("languageSelect");
@@ -288,6 +290,13 @@ function populateCities() {
     citiesList.appendChild(cityElement);
   });
 }
+
+
+const loaderHtml = `
+    <div class="loader_con w-[100vw] h-[100vh] fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center glass ">
+      <div class="loader"></div>
+    </div>
+`
 
 // getting a random city from cities list to show weather data
 // function getRandomCity(lang) {

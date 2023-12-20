@@ -32,10 +32,14 @@ var fr_body = new Quill("#fr_body", {
   },
 });
 
-var fileInput = document.getElementById("file-input");
-var filePreview = document.getElementById("file-preview");
+let fileInput = document.getElementById("file-input");
+let filePreview = document.getElementById("file-preview");
+let dropzone = document.getElementById("file-upload");
 
-var dropzone = document.getElementById("file-upload");
+let mainImageInput = document.getElementById("mainimagee");
+let mainImagePreview = document.getElementById("main_image_p");
+let main_image_z = document.getElementById("main_image_z");
+
 dropzone.addEventListener("dragover", function (e) {
   e.preventDefault();
   dropzone.classList.add("drag-over");
@@ -50,63 +54,153 @@ dropzone.addEventListener("drop", function (e) {
   fileInput.files = files;
   var event = new Event("change");
   fileInput.dispatchEvent(event);
+  displayDroppedImages(files,filePreview, fileInput)
 });
 
-const send_btn = document.getElementById("send_btn");
-let displayedImages = [];
-let choosedImage;
-let isUploading = false;
+main_image_z.addEventListener("dragover", function (e) {
+  e.preventDefault();
+  main_image_z.classList.add("drag-over");
+});
+main_image_z.addEventListener("dragleave", function () {
+  main_image_z.classList.remove("drag-over");
+});
+main_image_z.addEventListener("drop", function (e) {
+  e.preventDefault();
+  main_image_z.classList.remove("drag-over");
+  var files = e.dataTransfer.files;
+  mainImageInput.files = files;
+  var event = new Event("change");
+  mainImageInput.dispatchEvent(event);
+  displayDroppedImages(files,mainImagePreview, mainImageInput)
+});
 
-document
-  .getElementById("articleForm")
-  .addEventListener("submit", async function (event) {
-    event.preventDefault();
-    try {
-      let imagesData = new FormData(this);
-      let imagesResponse = await sendImagesToServer(imagesData);
-      const mainImage = await chooseMainImage(imagesResponse);
-      const title_ar = document.getElementById("title_ar").value;
-      const title_fr = document.getElementById("title_fr").value;
-      const body_ar = JSON.stringify(ar_body.getContents());
-      const body_fr = JSON.stringify(fr_body.getContents());
-      const all_images = imagesResponse;
-      console.log(title_ar, title_fr, body_ar, body_fr, mainImage, all_images);
-      const response = await fetch(`${url}articles`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title_ar,
-          title_fr,
-          body_ar,
-          body_fr,
-          mainImage,
-          all_images,
-        }),
+function displayDroppedImages(files, filePreviewer, fileInput, local=true) {
+  filePreviewer.innerHTML = "";
+  Array.from(files).forEach((file, index) => {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var imageContainer = document.createElement("div");
+      imageContainer.classList.add("image-container");
+      var imageElement = document.createElement("img");
+      imageElement.src = e.target.result;
+      imageElement.alt = `Image ${index + 1}`;
+      imageElement.classList.add("preview-image");
+      imageContainer.appendChild(imageElement);
+      var deleteButton = document.createElement("button");
+      deleteButton.innerText = "X";
+      deleteButton.classList.add("delete-button");
+      deleteButton.addEventListener("click", function () {
+        filePreviewer.removeChild(imageContainer);
+        var currentFiles = Array.from(fileInput.files);
+        currentFiles.splice(index, 1);
+        var dataTransfer = new DataTransfer();
+        currentFiles.forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
+        console.log(fileInput.files)
+        console.log(currentFiles)
       });
-      const responseData = await response.json();
-      console.log(responseData);
-
-    } catch (error) {
-      console.error("حدث خطأ:", error);
+      imageContainer.appendChild(deleteButton);
+      filePreviewer.appendChild(imageContainer);
+    };
+    if (local) {
+      reader.readAsDataURL(file);
+    } else {
+      console.log(file)
+      var imageContainer = document.createElement("div");
+      imageContainer.classList.add("image-container");
+      var imageElement = document.createElement("img");
+      imageElement.src = file;
+      imageElement.alt = `Image from the web`;
+      imageElement.classList.add("preview-image");
+      imageContainer.appendChild(imageElement);
+      var deleteButton = document.createElement("button");
+      deleteButton.innerText = "X";
+      deleteButton.id = `article_images/${file.split('article_images/')[1].split('.')[0]}`;
+      deleteButton.classList.add("delete-button");
+      deleteButton.addEventListener("click", function () {
+        filePreviewer.removeChild(imageContainer);
+        deleteImage(`article_images/${file.split('article_images/')[1].split('.')[0]}`)
+      });
+      imageContainer.appendChild(deleteButton);
+      filePreviewer.appendChild(imageContainer);
     }
   });
+}
 
-async function sendImagesToServer(images) {
+
+function deleteImage(id) {
+  fetch(`${url}articles/deleteimage`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ imageId: id }),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('فشل في حذف الصورة');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('تم حذف الصورة بنجاح:', data.message);
+      setEditMode()
+    })
+    .catch(error => {
+      console.error('حدث خطأ أثناء حذف الصورة:', error.message);
+    });
+}
+
+
+const send_btn = document.getElementById("send_btn");
+let the_form = document.getElementById("articleForm");
+
+send_btn.addEventListener("click", async function (event) {
+  event.preventDefault();
   try {
-    filePreview.innerHTML = "جارى رفع الملفات....";
-    isUploading = true;
-    updateButtonState();
-    const response = await fetch(`${url}articles/upload`, {
+    let imagesResponse = await sendImagesToServer();
+    const mainImage = await uploadFile();
+    const title_ar = document.getElementById("title_ar").value;
+    const title_fr = document.getElementById("title_fr").value;
+    const body_ar = JSON.stringify(ar_body.getContents());
+    const body_fr = JSON.stringify(fr_body.getContents());
+    const all_images = imagesResponse;
+    console.log(title_ar, title_fr, body_ar, body_fr, mainImage, all_images);
+    const response = await fetch(`${url}articles`, {
       method: "POST",
-      body: images,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title_ar,
+        title_fr,
+        body_ar,
+        body_fr,
+        mainImage,
+        all_images,
+      }),
+    });
+    const responseData = await response.json();
+    console.log(responseData);
+    window.location.assign("./dash.html")
+  } catch (error) {
+    console.error("حدث خطأ:", error);
+  }
+});
+
+async function sendImagesToServer() {
+  try {
+    var fileInput = document.getElementById("file-input");
+    var files = fileInput.files;
+    var formData = new FormData();
+    Array.from(files).forEach((file, index) => {
+      formData.append(`images`, file);
+    });
+    const response = await fetch(`${url}articles/uploadimages`, {
+      method: "POST",
+      body: formData,
     });
     const imagesResponse = await response.json();
-    console.log(imagesResponse);
-
-    isUploading = false;
-    updateButtonState();
     return imagesResponse.uploadedUrls;
   } catch (error) {
     console.error("حدث خطأ أثناء إرسال الصور:", error);
@@ -114,46 +208,25 @@ async function sendImagesToServer(images) {
   }
 }
 
-async function chooseMainImage(imagesResponse) {
-  return new Promise(async (resolve) => {
-    var files = imagesResponse;
-    filePreview.innerHTML = "";
-    for (var i = 0; i < files.length; i++) {
-      var file = files[i];
-      var previewItem = document.createElement("div");
-      previewItem.classList.add("p-3");
-      var image = document.createElement("img");
-      image.classList.add("file-preview-image");
-      previewItem.appendChild(image);
-      image.src = file;
-      image.classList.add("uploaded_file");
-      image.addEventListener("click", async function () {
-        resolve(await chooseIt(image));
-      });
-      filePreview.appendChild(previewItem);
-    }
-  });
-}
-// فى غلطة بنت وسخه
-async function chooseIt(image) {
-  return new Promise((resolve) => {
-    const allImages = document.querySelectorAll(".file-preview-image");
-    allImages.forEach((otherImage) => {
-      otherImage.style.border = "none";
+async function uploadFile() {
+  try {
+    var fileInput = document.getElementById("mainimagee");
+    var file = fileInput.files[0];
+    var formData = new FormData();
+    formData.append("mainimagee", file);
+    const response = await fetch(`${url}articles/upload`, {
+      method: "POST",
+      body: formData,
     });
-    image.style.border = "5px solid green";
-    resolve(image.src);
-  });
-}
-
-function updateButtonState() {
-  send_btn.classList.add("cursor-not-allowed");
-  if (isUploading) {
-    send_btn.textContent = "جارى رفع الصور";
-    send_btn.disabled = true;
-  } else {
-    send_btn.textContent = "اختر صورة رئيسية";
-    send_btn.disabled = true;
+    if (!response.ok) {
+      throw new Error("حدث خطأ في رفع الملف.");
+    }
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("خطأ في رفع الملف:", error);
+    throw error;
   }
 }
 
@@ -177,15 +250,17 @@ async function loadArticle() {
 }
 
 async function setEditMode() {
-let data = await loadArticle()
-let title_ar = document.getElementById("title_ar");
-let title_fr = document.getElementById("title_fr");
-let body_ar = ar_body.getText();
-let body_fr = fr_body.getText();
-title_ar.value = data.title_ar
-title_fr.value = data.title_fr
-ar_body.setContents(JSON.parse(data.body_ar));
-fr_body.setContents(JSON.parse(data.body_fr));
+  let data = await loadArticle();
+  let title_ar = document.getElementById("title_ar");
+  let title_fr = document.getElementById("title_fr");
+  let body_ar = ar_body.getText();
+  let body_fr = fr_body.getText();
+  title_ar.value = data.title_ar;
+  title_fr.value = data.title_fr;
+  ar_body.setContents(JSON.parse(data.body_ar));
+  fr_body.setContents(JSON.parse(data.body_fr));
+  displayDroppedImages(data.all_images, filePreview, fileInput,false)
+  // displayDroppedImages(data.mainImage, mainImagePreview, mainImageInput,false)
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -197,7 +272,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
   loadTranslations();
   if (id) {
-  await  setEditMode();
-  } else {
+    await setEditMode();
   }
 });
