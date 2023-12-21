@@ -20,7 +20,7 @@ function viewStateCities() {
   citiesArray.forEach((city) => {
     const cityElement = document.createElement("span");
     cityElement.className =
-      "text-black bg-gray-50 m-auto flex justify-center items-center font-bold h-[50px] border-2 rounded-lg text-center text-sm md:text-xl w-[100px] md:w-[180px] py-1 px-2";
+      "text-black bg-gray-50 m-auto flex justify-center items-center font-bold h-[50px] border-2 rounded-lg text-center text-sm md:text-xl w-[100px] md:w-[180px] py-1 px-2 cursor-pointer";
     cityElement.textContent = lang == "ar" ? city.ar : city.en;
     cityElement.dataset.lat = city.lat;
     cityElement.dataset.lng = city.lng;
@@ -54,7 +54,7 @@ async function callAdanTime(lat, lng, lang) {
       { hour: "numeric", minute: "numeric", hour12: true }
     );
     const prayerElement = `
-      <div class="font-bold text-xl text-black p-3 w-[100px] h-[150px] flex flex-col justify-center items-center gap-3 rounded-3xl bg-white ">
+      <div class="font-bold text-xl text-black p-3 w-[120px] h-[150px] flex flex-col justify-center items-center gap-3 rounded-3xl bg-white ">
         <p class="text-2xl" >${names[selectedPrayers.indexOf(prayerName)]}</p>
         <p dir="ltr" >${time12h}</p>
       </div>
@@ -68,7 +68,7 @@ async function handleCityClick(event) {
   const lat = event.currentTarget.getAttribute("data-lat");
   const lng = event.currentTarget.getAttribute("data-lng");
   const city = event.currentTarget.getAttribute("data-name");
-  lang = localStorage.getItem("lang");
+  let lang = localStorage.getItem("lang");
   await callWeatherAPI(lat, lng, lang);
   await callAdanTime(lat, lng, lang);
   city_name.innerText = city;
@@ -76,6 +76,7 @@ async function handleCityClick(event) {
 
 // the main function that takes lat, lng and call api to get weather data
 async function callWeatherAPI(lat, lng, lang) {
+  document.body.insertAdjacentHTML('beforeend', loaderHtml);
   try {
     const daysOfWeek = lang == "ar" ? daysOfWeekArabic : daysOfWeekFrench;
     const daysList = [];
@@ -126,6 +127,11 @@ async function callWeatherAPI(lat, lng, lang) {
     const ariana_con = document.querySelector(".ariana_con");
     ariana_con.innerHTML = "";
     const firstDay = data.daily[0];
+    const date = new Date(firstDay.dt * 1000);
+const day = date.getDate();
+const month = date.toLocaleDateString('en-US', { month: 'long' });
+const year = date.getFullYear();
+const formattedDate = `${day},${month},${year}`;
     // display weather data for main secion in home
     // display photo , change city name
     const ariana_w = `
@@ -135,9 +141,7 @@ async function callWeatherAPI(lat, lng, lang) {
       <p dir="rtl" class="font-bold text-2xl md:text-4xl font-md">${
         Math.round(firstDay.temp.max)
       }&deg;C</p>
-      <p class="text-xl font-bold">${new Date(
-        firstDay.dt * 1000
-      ).toLocaleDateString("fr-FR")}</p>
+      <p dir="ltr" class="text-xl font-bold">${formattedDate}</p>
     `;
     ariana_con.innerHTML += ariana_w;
     document.querySelector(
@@ -162,6 +166,10 @@ async function callWeatherAPI(lat, lng, lang) {
   </div>`;
     weatherContainer.innerHTML = err_msg;
     ariana_con.innerHTML = err_msg;
+  }
+  finally {
+    const loaderElement = document.querySelector('.loader_con');
+    loaderElement && loaderElement.remove();
   }
 }
 

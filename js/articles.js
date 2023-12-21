@@ -2,6 +2,7 @@ const article_con = document.getElementById("articles");
 // let theme = localStorage.getItem("theme")
 
 async function loadArticles() {
+  document.body.insertAdjacentHTML('beforeend', loaderHtml);
   try {
     const response = await fetch(`${url}articles`);
     if (!response.ok) {
@@ -14,6 +15,10 @@ async function loadArticles() {
     console.error(error);
     throw error;
   }
+  finally {
+    const loaderElement = document.querySelector('.loader_con');
+    loaderElement && loaderElement.remove();
+  }
 }
 
 async function add_eles(lang) {
@@ -25,6 +30,7 @@ async function add_eles(lang) {
     } else {
       for (let i = 0; i < articles.length; i++) {
         let articleElement = document.createElement("div");
+        articleElement.classList= "glass text-center article-div"
         const mainImage = articles[i].mainImage;
         const title =
           lang === "ar" ? articles[i].title_ar : articles[i].title_fr;
@@ -56,6 +62,7 @@ async function add_eles(lang) {
   } catch (error) {
     console.error(error);
   }
+  
 }
 
 selectElement.addEventListener("change", async function () {
@@ -65,8 +72,8 @@ selectElement.addEventListener("change", async function () {
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
-  lang = localStorage.getItem("lang") || "ar";
-  theme = localStorage.getItem("theme") || "light";
+  let lang = localStorage.getItem("lang") || "ar";
+  let theme = localStorage.getItem("theme") || "light";
   mainContainer.classList.add(theme);
   if (lang) {
     selectElement.value = lang;

@@ -1,7 +1,7 @@
 loadLayout()
 // http://localhost:5000/api/
-// const url = `https://weather-server-gules.vercel.app/api/`
-const url = `http://localhost:5000/api/`
+const url = `https://weatherserver.vercel.app/api/`
+// const url = `http://localhost:5000/api/`
 const stateNames = Object.keys(citiesData);
 const citiesArray = stateNames;
 const selectElement = document.getElementById("languageSelect");
@@ -145,19 +145,28 @@ function loadFooter() {
   let foooter = document.getElementById("foooter")
   foooter.innerHTML  = ""
   let content =  `  
-  <div class="w-[90%] md:w-[40%] flex flex-col justify-around items-center gap-4">
+  <div class="w-[90%] md:w-[50%] min-h-[250px] flex flex-col justify-around items-center gap-4">
   <div class="navs text-lg flex justify-around items-center gap-5">
     <a data-translation="con1" href="./contact.html"> </a>
     <a data-translation="con2" href="./Politique.html"> </a>
     <a data-translation="con3" href="./condetions.html"> </a>
   </div>
-  <div class="social flex justify-around items-center gap-4 w-[40%] text-3xl">
-    <i class="fa-brands fa-instagram"></i>
-    <i class="fa-brands fa-facebook-f"></i>
-    <i class="fa-brands fa-twitter"></i>
+  <div class="social flex justify-around items-center gap-4 w-[50%] text-4xl">
+  <a href="https://wa.me/0201029404662" target="_blank" rel="noopener noreferrer" class="hover:text-[#1a78f4] hover:transition-all hover:ease-in-out hover:duration-500 hover:scale-110">
+    <i class="fa-brands fa-square-facebook"></i>
+  </a>
+  <a href="https://wa.me/0201029404662" target="_blank" rel="noopener noreferrer" class="hover:text-[#1d9bf0] hover:transition-all hover:ease-in-out hover:duration-500 hover:scale-110">
+    <i class="fa-brands fa-square-twitter"></i>
+  </a>
+  <a href="https://wa.me/0201029404662" target="_blank" rel="noopener noreferrer" class="insta hover:transition-all hover:ease-in-out hover:duration-500 hover:scale-110">
+    <i class="fa-brands fa-square-instagram"></i>
+  </a>
   </div>
   <div class="copy">
     <p class="text-lg" id="footerText"></p>
+    <p class="text-lg">Developed By 
+    <a class="text-[#0167b4] text-xl font-bold" href="http://www.google.com" target="_blank" rel="noopener noreferrer">3adel shalkal</a>
+    </p>
   </div>
 </div>
 `
@@ -186,7 +195,7 @@ function displayResults(results) {
   results.forEach((result) => {
     const listItem = document.createElement("li");
     listItem.innerHTML = `
-    <a href="/city?name=${result}"
+    <a href="/city.html?name=${result}"
     class="inline-block w-full  result_item" >
     ${result}
     </a>`;
@@ -280,9 +289,9 @@ function populateCities() {
   citiesList.innerHTML = "";
   citiesArray.forEach((city) => {
     const cityElement = document.createElement("a");
-    cityElement.href = `/city?name=${city}`;
+    cityElement.href = `/city.html?name=${city}`;
     cityElement.id = "city";
-    cityElement.className = "bg-gray-50 m-auto flex justify-center items-center font-bold h-[50px] border-2 rounded-lg text-center text-sm md:text-xl w-[100px] md:w-[200px] py-1 px-2";
+    cityElement.className = "bg-gray-50 m-auto flex justify-center items-center font-bold h-[50px] border-2 rounded-lg text-center text-sm md:text-xl w-[100px] md:w-[250px] py-1 px-2";
     const spanElement = document.createElement("span");
     spanElement.className = "w-full text-black";
     spanElement.textContent = city;

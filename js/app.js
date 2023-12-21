@@ -137,6 +137,11 @@ async function callWeatherAPI(lat, lng, lang) {
     const ariana_con = document.querySelector(".ariana_con");
     ariana_con.innerHTML = "";
     const firstDay = data.daily[0];
+    const date = new Date(firstDay.dt * 1000);
+    const day = date.getDate();
+    const month = date.toLocaleDateString('en-US', { month: 'long' });
+    const year = date.getFullYear();
+    const formattedDate = `${day},${month},${year}`;
     // display weather data for main secion in home
     // display photo , change city name
     const ariana_w = `
@@ -146,9 +151,7 @@ async function callWeatherAPI(lat, lng, lang) {
       <p dir="rtl" class="font-bold text-2xl md:text-4xl font-md">${
         firstDay.temp.max
       }&deg;C</p>
-      <p class="text-xl font-bold">${new Date(
-        firstDay.dt * 1000
-      ).toLocaleDateString("fr-FR")}</p>
+      <p dir="ltr" class="text-xl font-bold">${formattedDate}</p>
     `;
     ariana_con.innerHTML += ariana_w;
     document.querySelector(

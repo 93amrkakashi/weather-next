@@ -27,9 +27,8 @@ async function add_eles(lang) {
     const all_images = article.all_images;
     const title = lang === "ar" ? article.title_ar : article.title_fr;
     const otherImages = all_images.filter(image => image !== mainImage);
-    const imagesHTML = otherImages
-    .map(image => `<img class="article_image" src="${image}" alt="">`)
-    ;
+    const imagesHTML = otherImages.map(image => 
+    `<img class="article_image w-full md:w-[50%] rounded-xl " src="${image}" alt="${image}">`).join('')
     const ops = lang == "ar" ? JSON.parse(article.body_ar).ops : JSON.parse(article.body_fr).ops ;
     const bodyHTML = ops.map(op => {
       if (op.insert) {
@@ -47,8 +46,7 @@ async function add_eles(lang) {
           <img src="${mainImage}" alt="">
         </div>
         <div class="desc font-bold text-xl text-center">${bodyHTML}</div>
-        <div class="images w-full flex justify-around items-center flex-wrap gap-6">${imagesHTML}</div>
-
+        <div class="images w-full flex flex-col md:flex-row justify-around items-center flex-wrap gap-6">${imagesHTML}</div>
       </div>`;
   } catch (error) {
     console.error(error);

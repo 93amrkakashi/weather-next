@@ -62,6 +62,7 @@ body {
 }
 
 .image {
+  width: 100%;
   overflow: hidden;
   border-radius: 18px 18px 0 0;
   height: 50%;
@@ -77,6 +78,13 @@ body {
 
 .show-el {
   top: 50%;
+}
+
+.insta:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hide-el {
@@ -102,14 +110,16 @@ body {
 .add_btn:hover {
   width: 225px;
 }
-
-.article_image {
-  width: 45%;
+.article-div{
+  border: 1px solid #f3f3f334;
+  border-radius: 18px 18px 0 0;
 }
+/* .article_image {
+  width: 45%;
+} */
 
 .footer {
   border-radius: 11px;
-  height: 172px;
   margin-bottom: 40px;
 }
 

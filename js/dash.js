@@ -60,6 +60,7 @@ form.addEventListener("submit", function(event) {
 
 
 async function loadArticles() {
+  document.body.insertAdjacentHTML('beforeend', loaderHtml);
   try {
     const response = await fetch(`${url}articles`);
     if (!response.ok) {
@@ -72,10 +73,15 @@ async function loadArticles() {
     console.error(error);
     throw error;
   }
+  finally {
+    const loaderElement = document.querySelector('.loader_con');
+    loaderElement && loaderElement.remove();
+  }
 }
 
 
 async function add_eles(lang) {
+  
   article_con.innerHTML = "";
   try {
     let articles = await loadArticles();
@@ -93,7 +99,7 @@ async function add_eles(lang) {
         const del_btn = lang === "ar" ? "حذف" : "supprimer";
         articleElement.innerHTML = `
           <div class="glass article max-w-[400px] h-[600px] rounded-2xl flex flex-col justify-start items-center gap-3">
-              <div class="image">
+              <div class="image w-full">
                   <img src="${mainImage}" alt="">
               </div>
               <div class="title font-bold text-3xl text-center ">${title}</div>
@@ -125,6 +131,7 @@ async function add_eles(lang) {
   } catch (error) {
     console.error(error);
   }
+  
 }
 
 // deleteArticle

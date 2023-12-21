@@ -184,6 +184,7 @@ async function A() {
     : console.error("Geolocation is not supported");
 }
 async function S(o, s, a) {
+  document.body.insertAdjacentHTML('beforeend', loaderHtml);
   try {
     const n = a == "ar" ? daysOfWeekArabic : daysOfWeekFrench,
       e = [];
@@ -232,18 +233,19 @@ async function S(o, s, a) {
       });
     const C = document.querySelector(".ariana_con");
     C.innerHTML = "";
-    const m = d.daily[0],
-      E = `
-      <h3 class="font-bold text-2xl md:text-4xl font-md">${
-        m.weather[0].description
-      }</h3>
-      <p dir="rtl" class="font-bold text-2xl md:text-4xl font-md">${
-        Math.round(m.temp.max)
-      }&deg;C</p>
-      <p class="text-xl font-bold">${new Date(m.dt * 1e3).toLocaleDateString(
-        "fr-FR"
-      )}</p>
-    `;
+const m = d.daily[0],
+  E = `
+  <h3 class="font-bold text-2xl md:text-4xl font-md">${
+    m.weather[0].description
+  }</h3>
+  <p dir="rtl" class="font-bold text-2xl md:text-4xl font-md">${
+    Math.round(m.temp.max)
+  }&deg;C</p>
+  <p dir="ltr" class="text-xl font-bold">${new Date(m.dt * 1e3).toLocaleDateString(
+    "en-US", { day: 'numeric', month: 'long', year: 'numeric' }
+  ).replace(/(\d+),(\s\w+),(\d+)/, '$1,$2,$3')}</p>
+`;
+
     (C.innerHTML += E),
       (document.querySelector(
         ".img"
@@ -266,6 +268,10 @@ async function S(o, s, a) {
       <p>Veuillez recharger la page & Si le problème persiste, contactez-nous</p>
   </div>`;
     (t.innerHTML = r), (e.innerHTML = r);
+  }
+  finally {
+    const loaderElement = document.querySelector('.loader_con');
+    loaderElement && loaderElement.remove();
   }
 }
 document.addEventListener("DOMContentLoaded", async function () {
