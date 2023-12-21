@@ -2,6 +2,7 @@ const article_con = document.getElementById("articles");
 
 
 async function loadArticle() {
+  document.body.insertAdjacentHTML('beforeend', loaderHtml);
   const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
   try {
@@ -15,6 +16,10 @@ const id = urlParams.get('id');
   } catch (error) {
     console.error(error);
     throw error;
+  }
+  finally {
+    const loaderElement = document.querySelector('.loader_con');
+    loaderElement && loaderElement.remove();
   }
 }
 

@@ -303,7 +303,18 @@ function populateCities() {
 
 const loaderHtml = `
     <div class="loader_con w-[100vw] h-[100vh] fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center glass ">
-      <div class="loader"></div>
+      <div class="spinner">
+        <div></div>   
+        <div></div>    
+        <div></div>    
+        <div></div>    
+        <div></div>    
+        <div></div>    
+        <div></div>    
+        <div></div>    
+        <div></div>    
+        <div></div>    
+      </div>
     </div>
 `
 
