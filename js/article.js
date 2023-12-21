@@ -33,7 +33,7 @@ async function add_eles(lang) {
     const title = lang === "ar" ? article.title_ar : article.title_fr;
     const otherImages = all_images.filter(image => image !== mainImage);
     const imagesHTML = otherImages.map(image => 
-    `<img class="article_image w-full md:w-[50%] rounded-xl " src="${image}" alt="${image}">`).join('')
+    `<img class="article_image w-full md:w-[47%] rounded-xl " src="${image}" alt="${image}">`).join('')
     const ops = lang == "ar" ? JSON.parse(article.body_ar).ops : JSON.parse(article.body_fr).ops ;
     const bodyHTML = ops.map(op => {
       if (op.insert) {
